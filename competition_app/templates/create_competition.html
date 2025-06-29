@@ -4,24 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Competition</title>
+    <title>创建比赛</title>
 </head>
 <body>
-    <h1>Create New Competition</h1>
+    <h1>创建比赛</h1>
+
     <form method="POST" action="/create_competition">
-        <label for="title">Competition Title:</label>
+        <label for="title">比赛名称:</label>
         <input type="text" id="title" name="title" required><br><br>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description"></textarea><br><br>
+        <label for="description">描述:</label>
+        <textarea id="description" name="description" required></textarea><br><br>
 
-        <label for="start_date">Start Date:</label>
+        <label for="start_date">开始日期:</label>
         <input type="date" id="start_date" name="start_date" required><br><br>
 
-        <label for="end_date">End Date:</label>
+        <label for="end_date">结束日期:</label>
         <input type="date" id="end_date" name="end_date" required><br><br>
 
-        <button type="submit">Create Competition</button>
+        <label for="score_format">成绩格式:</label>
+        <select id="score_format" name="score_format" required>
+            <option value="seconds">计时 (hh:mm:ss)</option>
+            <option value="count">计数 (例：1404)</option>
+        </select><br><br>
+
+        <button type="submit">创建</button>
     </form>
 </body>
 </html>

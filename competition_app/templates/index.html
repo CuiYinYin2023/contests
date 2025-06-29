@@ -4,19 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Competition App</title>
+    <title>脆音音直播交流群自用团建系统！</title>
 </head>
 <body>
-    <h1>Welcome to the Competition App</h1>
-    <a href="/create_competition">Create New Competition</a>
+    <h1>脆音音直播交流群自用团建系统</h1>
+    <a href="/create_competition">脆音音，该开新团建了！ - 点击创建</a>
 
-    <h2>Upcoming Competitions</h2>
+    <h2>正在进行中...</h2>
     <ul>
         {% for competition in competitions %}
-            <li>
-                <a href="#">{{ competition.title }}</a> - {{ competition.status }}<br>
-                <span>{{ competition.description }}</span>
-            </li>
+            {% if competition.status == 'ongoing' %}
+                <li>
+                    <a href="#">{{ competition.title }}</a><br>
+                    <span>{{ competition.description }}</span>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    
+    <h2>历史团建</h2>
+    <ul>
+        {% for competition in competitions %}
+            {% if competition.status == 'ended' %}
+                <li>
+                    <a href="#">{{ competition.title }}</a><br>
+                    <span>{{ competition.description }}</span>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
 </body>

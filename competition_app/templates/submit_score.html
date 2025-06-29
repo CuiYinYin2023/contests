@@ -1,0 +1,33 @@
+<!-- templates/submit_score.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提交成绩 - {{ competition.title }}</title>
+</head>
+<body>
+    <h1>提交成绩 - {{ competition.title }}</h1>
+
+    <form method="POST" action="/submit_score/{{ competition.id }}">
+        <label for="participant_name">参赛选手:</label>
+        <input type="text" id="participant_name" name="participant_name" required><br><br>
+
+        {% if competition.score_format == 'seconds' %}
+            <label for="hours">小时:</label>
+            <input type="number" id="hours" name="hours" min="0" value="{{ request.form['hours'] if request.form['hours'] else 0 }}" required><br><br>
+
+            <label for="minutes">分钟:</label>
+            <input type="number" id="minutes" name="minutes" min="0" value="{{ request.form['minutes'] if request.form['minutes'] else 0 }}" required><br><br>
+
+            <label for="seconds">秒:</label>
+            <input type="number" id="seconds" name="seconds" min="0" max="59" value="{{ request.form['seconds'] if request.form['seconds'] else 0 }}" required><br><br>
+        {% elif competition.score_format == 'count' %}
+            <label for="number_score">个数:</label>
+            <input type="number" id="number_score" name="number_score" step="1" required><br><br>
+        {% endif %}
+
+        <button type="submit">提交</button>
+    </form>
+</body>
+</html>

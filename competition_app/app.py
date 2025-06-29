@@ -17,18 +17,17 @@ class Competition(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 比赛ID
     title = db.Column(db.String(100), nullable=False)  # 比赛标题
     description = db.Column(db.String(255), nullable=True)  # 比赛描述
-    status = db.Column(db.String(20), nullable=False)  # 比赛状态，'进行中' 或 '已结束'
+    status = db.Column(db.String(20), default="ongoing")  # 比赛状态，'ongoing' 或 'ended'
     start_date = db.Column(db.Date, nullable=False)  # 开始日期
     end_date = db.Column(db.Date, nullable=False)  # 结束日期
+    score_format = db.Column(db.String(20), nullable=False, default="seconds")  # seconds/number （有的比赛提交成绩是计时（秒），有的是个数）
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # 创建时间
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 提交记录ID
     participant_name = db.Column(db.String(100), nullable=False)  # 参赛者姓名
-    hour = db.Column(db.Integer, nullable=False, default=0)  # 小时
-    minute = db.Column(db.Integer, nullable=False, default=0)  # 分钟
-    second = db.Column(db.Integer, nullable=False, default=0)  # 秒
-    time = db.Column(db.Time, nullable=False)  # 比赛成绩
+    score = db.Column(db.Integer, nullable=False)  # 可以存储时间（秒）或个数
+    score_type = db.Column(db.String(20), nullable=False, default="seconds")  # 用来标记成绩类型 ("seconds" 或 "count")
     competition_id = db.Column(db.Integer, db.ForeignKey('competition.id'), nullable=False)  # 比赛ID，外键关联
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # 提交时间
 
@@ -50,6 +49,7 @@ def create_competition():
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
+        score_format = request.form['score_format']
         start_date_str = request.form['start_date']
         end_date_str = request.form['end_date']
 
@@ -60,7 +60,7 @@ def create_competition():
         new_competition = Competition(
             title=title,
             description=description,
-            status="进行中",  # 默认设置为 "进行中"
+            score_format=score_format,
             start_date=start_date,
             end_date=end_date
         )
@@ -71,6 +71,41 @@ def create_competition():
         return redirect(url_for('index'))
 
     return render_template('create_competition.html')
+
+@app.route('/submit_score/<int:competition_id>', methods=['GET', 'POST'])
+def submit_score(competition_id):
+    competition = Competition.query.get_or_404(competition_id)
+
+    if request.method == 'POST':
+        participant_name = request.form['participant_name']
+        score_type = competition.score_format  # 获取比赛要求的成绩格式
+
+        # 如果成绩格式是时间，则将其转换为秒
+        if score_type == 'seconds':
+            hours = int(request.form['hours'])
+            minutes = int(request.form['minutes'])
+            seconds = int(request.form['seconds'])
+            score = hours * 3600 + minutes * 60 + seconds  # 将时间转换为秒
+
+        # 如果成绩格式是数字，则直接使用数字成绩
+        elif score_type == 'count':
+            score = int(request.form['number_score'])  # 直接使用数字成绩
+
+        # 创建新的成绩提交记录
+        new_submission = Submission(
+            participant_name=participant_name,
+            score=score,
+            score_type=score_type,  # 保存成绩类型
+            competition_id=competition.id
+        )
+
+        db.session.add(new_submission)
+        db.session.commit()
+
+        return redirect(url_for('index'))
+
+    return render_template('submit_score.html', competition=competition)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
