@@ -1,12 +1,23 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Competition App</title>
+    <title>Competition App</title>
 </head>
 <body>
-    <h1>Welcome to the Competition App!</h1>
-    <p>This is your first Flask app.</p>
+    <h1>Welcome to the Competition App</h1>
+    <a href="/create_competition">Create New Competition</a>
+
+    <h2>Upcoming Competitions</h2>
+    <ul>
+        {% for competition in competitions %}
+            <li>
+                <a href="#">{{ competition.title }}</a> - {{ competition.status }}<br>
+                <span>{{ competition.description }}</span>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
