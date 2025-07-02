@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>编辑排行榜规则 - {{ rule.name }}</title>
+</head>
+<body>
+    <h1>编辑排行榜规则 - {{ rule.name }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li style="color: {% if category == 'error' %}red{% else %}green{% endif %};">
+                    {{ message }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>规则名称：</label><br/>
+        <input type="text" name="name" value="{{ rule.name }}" required/><br/><br/>
+
+        <label>SQL 排序语句：</label><br/>
+        <textarea name="sql_query" rows="6" cols="60" required>{{ rule.sql_query }}</textarea><br/><br/>
+
+        <button type="submit">更新规则</button>
+    </form>
+
+    <p><a href="{{ url_for('manage_rules', competition_id=rule.competition_id) }}">返回规则管理</a></p>
+</body>
+</html>

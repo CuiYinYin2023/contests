@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>管理排行榜规则 - {{ competition.title }}</title>
+</head>
+<body>
+    <h1>管理排行榜规则 - {{ competition.title }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li style="color: {% if category == 'error' %}red{% else %}green{% endif %};">
+                    {{ message }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h2>新增排行榜规则</h2>
+    <form method="POST">
+        <label>规则名称：</label><br/>
+        <input type="text" name="name" required/><br/><br/>
+
+        <label>SQL 排序语句：</label><br/>
+        <textarea name="sql_query" rows="6" cols="60" required></textarea><br/><br/>
+
+        <button type="submit">添加规则</button>
+    </form>
+
+    <h2>已有规则</h2>
+    <ul>
+        {% for rule in rules %}
+        <li>
+            <strong>{{ rule.name }}</strong>: {{ rule.sql_query }}
+            [<a href="{{ url_for('edit_rule', rule_id=rule.id) }}">编辑</a>]
+            <form action="{{ url_for('delete_rule', rule_id=rule.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('确定删除此规则吗？');">
+                <button type="submit">删除</button>
+            </form>
+        </li>
+        {% else %}
+        <li>还没有规则</li>
+        {% endfor %}
+    </ul>
+
+
+    <p><a href="{{ url_for('index') }}">返回主页</a></p>
+</body>
+</html>

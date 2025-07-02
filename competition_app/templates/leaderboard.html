@@ -1,0 +1,40 @@
+<!-- templates/leaderboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard - {{ competition.title }}</title>
+</head>
+<body>
+    <h1>Leaderboard for "{{ competition.title }}"</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Participant</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions|sort(attribute='score') %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ submission.participant_name }}</td>
+                <td>
+                    {% if competition.score_format == 'seconds' %}
+                        {% set total = submission.score|int %}
+                        {% set h = total // 3600 %}
+                        {% set m = (total % 3600) // 60 %}
+                        {% set s = total % 60 %}
+                        {{ "%02d:%02d:%02d" | format(h, m, s) }}
+                    {% elif competition.score_format == 'count' %}
+                        {{ submission.score|int }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
